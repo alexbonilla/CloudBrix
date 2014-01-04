@@ -36,6 +36,7 @@ public class VistaraAPI {
     private final String CLIENT_ID = "client_570998";
     private final String AUTH_TOKEN = "f5eX98vrBXB79y6crNbquEF5nb4VjrFF";
 
+//    Shit ain't working
     private void setMethodHeaders(HttpRequestBase httpMethod, String message, String time) {
         if (httpMethod instanceof HttpPost || httpMethod instanceof HttpPut) {
             httpMethod.setHeader("Content-Type", "application/xml;charset=UTF-8");
