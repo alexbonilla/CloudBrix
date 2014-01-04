@@ -36,7 +36,6 @@ public class VistaraAPI {
     private final String CLIENT_ID = "client_570998";
     private final String AUTH_TOKEN = "f5eX98vrBXB79y6crNbquEF5nb4VjrFF";
 
-//    Shit ain't working
     private void setMethodHeaders(HttpRequestBase httpMethod, String message, String time) {
         if (httpMethod instanceof HttpPost || httpMethod instanceof HttpPut) {
             httpMethod.setHeader("Content-Type", "application/xml;charset=UTF-8");
@@ -66,7 +65,7 @@ public class VistaraAPI {
 
     private void sendGet() throws Exception {
 
-        String url = "https://app.vistarait.com/api/"+CLIENT_ID+"/devices";
+        String url = "https://app.vistarait.com/api/" + CLIENT_ID + "/devices";
 
         HttpClient client = new DefaultHttpClient();
         HttpGet request = new HttpGet(url);
@@ -98,7 +97,7 @@ public class VistaraAPI {
     // HTTP POST request
     private void sendPost() throws Exception {
 
-        String url = "https://app.vistarait.com/api/"+CLIENT_ID+"/devices";
+        String url = "https://app.vistarait.com/api/" + CLIENT_ID + "/devices";
 
         HttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost(url);
@@ -114,9 +113,7 @@ public class VistaraAPI {
 //        urlParameters.add(new BasicNameValuePair("zoneId", "1"));
 //        urlParameters.add(new BasicNameValuePair("apiKey", API_KEY));
 //        urlParameters.add(new BasicNameValuePair("response", "json"));
-
 //        post.setEntity(new UrlEncodedFormEntity(urlParameters));
-
         setMethodHeaders(post, CLIENT_ID, String.valueOf(System.currentTimeMillis()));
 
         HttpResponse response = client.execute(post);
