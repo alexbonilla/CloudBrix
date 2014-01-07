@@ -3,34 +3,26 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package api.vistara;
+package api.test.vistara;
 
-import api.cloudstack.CloudStackAPI;
-import api.utils.HMACGenerator;
+import com.cloudbrix.utils.HMACGenerator;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 
 /**
  *
  * @author Alex
  */
-public class VistaraAPI {
+public class VistaraAPITest {
 
     private final String USER_AGENT = "Mozilla/5.0";
     private final String CLIENT_ID = "client_570998";
@@ -51,21 +43,21 @@ public class VistaraAPI {
     public static void main(String[] args) {
         try {
             // TODO code application logic here
-            VistaraAPI http = new VistaraAPI();
+            VistaraAPITest http = new VistaraAPITest();
 
             System.out.println("Testing 1 - Send Http GET request");
             http.sendGet();
             System.out.println("\nTesting 2 - Send Http POST request");
             http.sendPost();
         } catch (Exception ex) {
-            Logger.getLogger(CloudStackAPI.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("ERROR "+ex.toString());
         }
     }
 // HTTP GET request
 
     private void sendGet() throws Exception {
 
-        String url = "https://app.vistarait.com/api/" + CLIENT_ID + "/devices";
+        String url = "https://app.vistarait.com/api/"+CLIENT_ID+"/devices";
 
         HttpClient client = new DefaultHttpClient();
         HttpGet request = new HttpGet(url);
@@ -97,7 +89,7 @@ public class VistaraAPI {
     // HTTP POST request
     private void sendPost() throws Exception {
 
-        String url = "https://app.vistarait.com/api/" + CLIENT_ID + "/devices";
+        String url = "https://app.vistarait.com/api/"+CLIENT_ID+"/devices";
 
         HttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost(url);
@@ -113,7 +105,9 @@ public class VistaraAPI {
 //        urlParameters.add(new BasicNameValuePair("zoneId", "1"));
 //        urlParameters.add(new BasicNameValuePair("apiKey", API_KEY));
 //        urlParameters.add(new BasicNameValuePair("response", "json"));
+
 //        post.setEntity(new UrlEncodedFormEntity(urlParameters));
+
         setMethodHeaders(post, CLIENT_ID, String.valueOf(System.currentTimeMillis()));
 
         HttpResponse response = client.execute(post);
