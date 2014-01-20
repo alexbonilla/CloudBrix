@@ -64,21 +64,21 @@ public class VistaraAPITest {
         FileInputStream instream = new FileInputStream(new File("C:\\Users\\Alex\\Documents\\CloudBrix\\myab.keystore"));
         try {
             trustStore.load(instream, "123432".toCharArray());
-            trustStore.load(null, null);
         } finally {
             instream.close();
         }
         SSLContext sslcontext = SSLContexts.custom()
-//                .loadTrustMaterial(trustStore)
+                //                .loadTrustMaterial(trustStore)
                 .build();
-        
+
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext,
                 SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
         CloseableHttpClient httpclient = HttpClients.custom()
                 .setSSLSocketFactory(sslsf)
                 .build();
 
-        String url = "https://66.198.105.91/" + CLIENT_ID + "/devices";
+        //        String url = "https://66.198.105.91/" + CLIENT_ID + "/devices
+        String url = "https://api.vistarait.com/" + CLIENT_ID + "/devices";
 
         HttpGet request = new HttpGet(url);
 
@@ -125,7 +125,8 @@ public class VistaraAPITest {
                 .setSSLSocketFactory(sslsf)
                 .build();
 
-        String url = "https://66.198.105.91/" + CLIENT_ID + "/devices";
+//        String url = "https://66.198.105.91/" + CLIENT_ID + "/devices";
+        String url = "https://api.vistarait.com/" + CLIENT_ID + "/devices";
 
         HttpPost post = new HttpPost(url);
 
