@@ -6,13 +6,17 @@
 package api.test.vistara;
 
 import com.cloudbrix.utils.HMACGenerator;
+import com.cloudbrix.utils.MyHttpClientWrapper;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.security.KeyStore;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -60,24 +64,29 @@ public class VistaraAPITest {
 // HTTP GET request
 
     private void sendGet() throws Exception {
-        KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        FileInputStream instream = new FileInputStream(new File("C:\\Users\\Alex\\Documents\\CloudBrix\\myab.keystore"));
-        try {
-            trustStore.load(instream, "123432".toCharArray());
-        } finally {
-            instream.close();
-        }
-        SSLContext sslcontext = SSLContexts.custom()
-                //                .loadTrustMaterial(trustStore)
+//        KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+//        FileInputStream instream = new FileInputStream(new File("C:\\Users\\Alex\\Documents\\CloudBrix\\myab.keystore"));
+//        try {
+//            trustStore.load(instream, "123432".toCharArray());
+//            trustStore.load(null, null);
+//        } finally {
+//            instream.close();
+//        }
+//        SSLContext sslcontext = SSLContexts.custom()
+//                //                .loadTrustMaterial(trustStore)
+//                .build();
+//
+//        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext,
+//                SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+//        CloseableHttpClient httpclient = HttpClients.custom()
+//                .setSSLSocketFactory(sslsf)
+//                .build();
+
+        HttpClient httpclient = HttpClients.custom()
                 .build();
 
-        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext,
-                SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-        CloseableHttpClient httpclient = HttpClients.custom()
-                .setSSLSocketFactory(sslsf)
-                .build();
+        httpclient = wrapClient(httpclient);
 
-        //        String url = "https://66.198.105.91/" + CLIENT_ID + "/devices
         String url = "https://api.vistarait.com/" + CLIENT_ID + "/devices";
 
         HttpGet request = new HttpGet(url);
@@ -108,24 +117,28 @@ public class VistaraAPITest {
 
     // HTTP POST request
     private void sendPost() throws Exception {
-        KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        FileInputStream instream = new FileInputStream(new File("C:\\Users\\Alex\\Documents\\CloudBrix\\myab.keystore"));
-        try {
-            trustStore.load(instream, "123432".toCharArray());
-        } finally {
-            instream.close();
-        }
-        SSLContext sslcontext = SSLContexts.custom()
-                .loadTrustMaterial(trustStore)
+//        KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+//        FileInputStream instream = new FileInputStream(new File("C:\\Users\\Alex\\Documents\\CloudBrix\\myab.keystore"));
+//        try {
+//            trustStore.load(instream, "123432".toCharArray());
+//        } finally {
+//            instream.close();
+//        }
+//        SSLContext sslcontext = SSLContexts.custom()
+//                .loadTrustMaterial(trustStore)
+//                .build();
+//
+//        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext,
+//                SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
+//        CloseableHttpClient httpclient = HttpClients.custom()
+//                .setSSLSocketFactory(sslsf)
+//                .build();
+
+        HttpClient httpclient = HttpClients.custom()
                 .build();
 
-        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext,
-                SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
-        CloseableHttpClient httpclient = HttpClients.custom()
-                .setSSLSocketFactory(sslsf)
-                .build();
+        httpclient = wrapClient(httpclient);
 
-//        String url = "https://66.198.105.91/" + CLIENT_ID + "/devices";
         String url = "https://api.vistarait.com/" + CLIENT_ID + "/devices";
 
         HttpPost post = new HttpPost(url);
@@ -152,5 +165,21 @@ public class VistaraAPITest {
 
         System.out.println(result.toString());
 
+    }
+
+    @SuppressWarnings("deprecation")
+    private static HttpClient wrapClient(HttpClient base) {
+        try {
+            SSLContext ctx = SSLContext.getInstance("TLS");
+            MyHttpClientWrapper tm = new MyHttpClientWrapper();
+            ctx.init(null, new TrustManager[]{(X509TrustManager) tm}, null);
+
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ctx, SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+            CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
+            return httpclient;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 }
