@@ -6,12 +6,11 @@
 package api.test.vistara;
 
 import com.cloudbrix.utils.HMACGenerator;
-import com.cloudbrix.utils.MyHttpClientWrapper;
+
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.security.KeyStore;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -22,9 +21,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+
+
+
 
 /**
  *
@@ -41,8 +42,13 @@ public class VistaraAPITest {
             httpMethod.setHeader("Content-Type", "application/xml;charset=UTF-8");
         }
         httpMethod.setHeader("Time", time);
-
+//        try {
 //            httpMethod.setHeader("Hash", HMACGenerator.computeSignatureHmacMD5(message + time,AUTH_TOKEN));
+//        } catch (GeneralSecurityException ex) {
+//            Logger.getLogger(VistaraAPITest.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (UnsupportedEncodingException ex) {
+//            Logger.getLogger(VistaraAPITest.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         httpMethod.setHeader("Hash", HMACGenerator.getHMAC(AUTH_TOKEN, message + time));
 
         httpMethod.setHeader("Accept", "application/xml");
@@ -82,19 +88,16 @@ public class VistaraAPITest {
 //                .setSSLSocketFactory(sslsf)
 //                .build();
 
-        HttpClient httpclient = HttpClients.custom()
-                .build();
+        HttpClient httpclient = wrapClient();
 
-        httpclient = wrapClient(httpclient);
-
-        String url = "https://api.vistarait.com/" + CLIENT_ID + "/devices";
+        String url = "https://66.198.105.91/" + CLIENT_ID + "/devices";
 
         HttpGet request = new HttpGet(url);
 
         // add request header
         request.addHeader("User-Agent", USER_AGENT);
 
-        setMethodHeaders(request, "", "");
+        setMethodHeaders(request, CLIENT_ID, String.valueOf(System.currentTimeMillis()));
 
         HttpResponse response = httpclient.execute(request);
 
@@ -134,12 +137,9 @@ public class VistaraAPITest {
 //                .setSSLSocketFactory(sslsf)
 //                .build();
 
-        HttpClient httpclient = HttpClients.custom()
-                .build();
+        HttpClient httpclient = wrapClient();
 
-        httpclient = wrapClient(httpclient);
-
-        String url = "https://api.vistarait.com/" + CLIENT_ID + "/devices";
+        String url = "https://66.198.105.91/" + CLIENT_ID + "/devices";
 
         HttpPost post = new HttpPost(url);
 
@@ -168,11 +168,24 @@ public class VistaraAPITest {
     }
 
     @SuppressWarnings("deprecation")
-    private static HttpClient wrapClient(HttpClient base) {
+    private static HttpClient wrapClient() {
         try {
             SSLContext ctx = SSLContext.getInstance("TLS");
-            MyHttpClientWrapper tm = new MyHttpClientWrapper();
-            ctx.init(null, new TrustManager[]{(X509TrustManager) tm}, null);
+            X509TrustManager tm = new X509TrustManager() {
+                @Override
+                public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException {
+                }
+
+                @Override
+                public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException {
+                }
+
+                @Override
+                public X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+            };
+            ctx.init(null, new TrustManager[]{tm}, null);
 
             SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(ctx, SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
             CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
