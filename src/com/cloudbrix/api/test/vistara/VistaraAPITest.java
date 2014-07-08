@@ -90,7 +90,7 @@ public class VistaraAPITest {
 
         HttpClient httpclient = wrapClient();
 
-        String url = "https://nealerts-ws.netenrich.net/" + CLIENT_ID + "/devices";
+        String url = "https://api.mspnocsupport.com/api/" + CLIENT_ID + "/devices";
 
         HttpGet request = new HttpGet(url);
 
@@ -139,7 +139,7 @@ public class VistaraAPITest {
 
         HttpClient httpclient = wrapClient();
 
-        String url = "https://nealerts-ws.netenrich.net/" + CLIENT_ID + "/devices";
+        String url = "https://api.mspnocsupport.com/api/" + CLIENT_ID + "/devices";
 
         HttpPost post = new HttpPost(url);
 
