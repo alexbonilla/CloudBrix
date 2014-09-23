@@ -25,8 +25,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
 
-
-
 /**
  *
  * @author Alex
@@ -50,6 +48,8 @@ public class VistaraAPITest {
 //            Logger.getLogger(VistaraAPITest.class.getName()).log(Level.SEVERE, null, ex);
 //        }
         httpMethod.setHeader("Hash", HMACGenerator.getHMAC(AUTH_TOKEN, message + time));
+//        httpMethod.setHeader("Hash", HMACGenerator.getHMAC(AUTH_TOKEN, message));
+
 
         httpMethod.setHeader("Accept", "application/xml");
     }
@@ -61,8 +61,8 @@ public class VistaraAPITest {
 
             System.out.println("Testing 1 - Send Http GET request");
             http.sendGet();
-            System.out.println("\nTesting 2 - Send Http POST request");
-            http.sendPost();
+//            System.out.println("\nTesting 2 - Send Http POST request");
+//            http.sendPost();
         } catch (Exception ex) {
             System.out.println("ERROR " + ex.toString());
         }
@@ -89,8 +89,10 @@ public class VistaraAPITest {
 //                .build();
 
         HttpClient httpclient = wrapClient();
+//        HttpClient httpclient = HttpClient();
 
-        String url = "https://api.mspnocsupport.com/api/" + CLIENT_ID + "/devices";
+        String url = "https://nealerts-ws.netenrich.net/api/" + CLIENT_ID + "/users";
+//        String url = "https://mspnocsupport.com/api/" + CLIENT_ID + "/users";
 
         HttpGet request = new HttpGet(url);
 
@@ -139,7 +141,7 @@ public class VistaraAPITest {
 
         HttpClient httpclient = wrapClient();
 
-        String url = "https://api.mspnocsupport.com/api/" + CLIENT_ID + "/devices";
+        String url = "https://nealerts-ws.netenrich.net/" + CLIENT_ID + "/devices";
 
         HttpPost post = new HttpPost(url);
 
